@@ -7,8 +7,8 @@ import random
 
 # CONFIG
 URL = "https://www.emploi-public.ma/fr/concours-liste"
-TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
-CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
+TELEGRAM_TOKEN = "8433126797:AAGkkozkRrOqAZUHNIqptIKHbGYkTCvkEw8"
+TELEGRAM_CHAT_ID = "8419252694"
 HISTORY_FILE = "seen_jobs.json"
 
 # Human-like headers
