@@ -8,7 +8,7 @@ import random
 # CONFIG
 URL = "https://www.emploi-public.ma/fr/concours-liste"
 TELEGRAM_TOKEN = "8433126797:AAGkkozkRrOqAZUHNIqptIKHbGYkTCvkEw8"
-CHAT_ID = "8419252694"
+CHAT_ID = "-5250172928"   # 👈 GROUP ID (NEGATIVE)
 HISTORY_FILE = "seen_jobs.json"
 
 # Human-like headers
@@ -20,27 +20,27 @@ HEADERS = {
     ])
 }
 
-# Send Telegram
 def send_telegram(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    data = {"chat_id": CHAT_ID, "text": message, "parse_mode": "Markdown"}
+    data = {
+        "chat_id": CHAT_ID,
+        "text": message,
+        "parse_mode": "Markdown"
+    }
     r = requests.post(url, data=data)
     print("Telegram status:", r.status_code)
-    time.sleep(random.uniform(1, 3))  # human-like pause
+    time.sleep(random.uniform(1, 3))
 
-# Load saved jobs
 def load_history():
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, "r") as f:
             return json.load(f)
     return []
 
-# Save seen jobs
 def save_history(jobs):
     with open(HISTORY_FILE, "w") as f:
         json.dump(jobs, f, indent=2)
 
-# Scraper logic
 def scrape():
     print("Starting scrape...")
     r = requests.get(URL, headers=HEADERS, timeout=15)
@@ -58,17 +58,20 @@ def scrape():
         title_tag = a.select_one("h2.card-title")
         if not title_tag:
             continue
+
         title = title_tag.get_text(strip=True)
         href = a.get("href")
         if not href:
             continue
-        job_id = href  # unique by href
+
+        job_id = href
         current_jobs.append(job_id)
+
         if job_id not in seen_jobs:
             full_link = "https://www.emploi-public.ma" + href
             msg = f"🚨 *Nouveau Concours*\n\n*{title}*\n[Voir l'annonce]({full_link})"
             new_jobs.append(msg)
-            if len(new_jobs) >= 3:  # limit per run to be human-like
+            if len(new_jobs) >= 3:
                 break
 
     for msg in new_jobs:
@@ -76,7 +79,7 @@ def scrape():
 
     if new_jobs:
         save_history(current_jobs)
-        print(f"Sent {len(new_jobs)} new job alerts")
+        print(f"Sent {len(new_jobs)} new alerts")
     else:
         print("No new jobs found")
 
